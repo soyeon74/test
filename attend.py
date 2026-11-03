@@ -22,7 +22,7 @@ def add_attendance():
 
         writer.writerow([today, name])
 
-    print(f"{name}님 출석 완료!")
+    print(f"{name}님, 오늘도 출석하셨습니다. 좋은 하루 보내세요!")
 
 def show_attendance():
     if not FILE.exists():
