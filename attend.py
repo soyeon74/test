@@ -34,12 +34,33 @@ def show_attendance():
         for row in reader:
             print(" | ".join(row))
 
+
+def show_attendance_count():
+    if not FILE.exists():
+        print("아직 출석 기록이 없습니다.")
+        return
+
+    counts = {}
+
+    with FILE.open("r", newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            name = row["이름"]
+            counts[name] = counts.get(name, 0) + 1
+
+    print("\n=== 이름별 출석 횟수 ===")
+
+    for name, count in counts.items():
+        print(f"{name}: {count}회")
+
+
 while True:
     print("\n=== 스터디 출석부 ===")
     print("1. 출석 등록")
     print("2. 출석 목록 보기")
-    print("3. 종료")
-
+    print("3. 출석 횟수 확인")
+    print("4. 종료")
     choice = input("번호 선택: ")
 
     if choice == "1":
@@ -47,7 +68,9 @@ while True:
     elif choice == "2":
         show_attendance()
     elif choice == "3":
+        show_attendance_count()
+    elif choice == "4":
         print("프로그램을 종료합니다.")
         break
     else:
-        print("1~3 중 선택하세요.")
+        print("1~4 중 선택하세요.")
