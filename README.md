@@ -69,3 +69,37 @@
 - 교육장과 집의 변경사항 통합
 - 출석률 계산 기능 추가
 - 브랜치 및 병합 연습
+
+## Git 브랜치 및 병합 실습
+
+### 1. 브랜치 생성
+기존 main 브랜치에서 새로운 기능을 개발하기 위해 `feature-attendance-rate` 브랜치를 생성하였다.
+
+`git switch -c feature-attendance-rate`
+
+### 2. 기능 개발
+기존 출석부에 이름별 출석 횟수 확인 기능을 추가하였다.
+
+- 기존 메뉴: 출석 등록, 출석 목록, 종료
+- 변경 메뉴: 출석 등록, 출석 목록, 출석 횟수 확인, 종료
+- 실행 결과: 홍길동 1회 출석 확인
+
+### 3. 변경사항 기록
+`git add attend.py`
+
+`git commit -m "출석 횟수 확인 기능 추가"`
+
+### 4. main 브랜치 병합
+`git switch main`
+
+`git merge feature-attendance-rate`
+
+병합 결과: Fast-forward 방식으로 정상 반영됨.
+
+### 5. GitHub 업로드
+`git push`
+
+GitHub main 브랜치에 변경사항이 반영되었음을 확인하였다.
+
+### 6. 추가 확인사항
+병합 후 프로그램의 최종 정상 종료 검증은 별도로 확인할 예정이다.
