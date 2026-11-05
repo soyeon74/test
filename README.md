@@ -1,105 +1,366 @@
 # 코디세이 스터디 출석부
 
 ## 1. 프로젝트 소개
-이 프로젝트는 코디세이 올인원 온보딩 실습을 위한 Python 출석부 프로그램입니다.
 
-교육장과 집이라는 두 개의 개발환경을 가정하여 GitHub로 파일을 공유하고 Docker로 프로그램을 실행하는 것을 목표로 합니다.
+이 프로젝트는 코디세이 올인원 온보딩 실습을 위한 Python 기반 스터디 출석부 프로그램입니다.
+
+교육장과 집이라는 두 개발환경에서 동일한 프로젝트를 사용하면서 CLI, Git, GitHub, Docker의 기본 명령어와 개발 협업 과정을 학습하는 것을 목표로 합니다.
+
+주요 실습 목표는 다음과 같습니다.
+
+- CLI를 이용한 파일 및 폴더 관리
+- Python 출석부 프로그램 제작 및 실행
+- GitHub를 이용한 코드 업로드와 다운로드
+- Git 브랜치 생성 및 병합
+- Docker를 이용한 별도 Python 설치 없는 프로그램 실행
+- 바인드 마운트를 통한 출석 기록 유지
+- Git 충돌 발생 및 해결
+
+실제 교육장 PC의 작업 환경이 초기화되어, 이후에는 별도 PC에 교육장 폴더를 재구성하여 실습을 이어 진행했습니다.
 
 ## 2. 주요 기능
-- 출석자 이름 입력
-- 오늘 날짜 자동 기록
-- 출석 목록 조회
-- CSV 파일에 출석 기록 저장
+
+`attend.py`에서 제공하는 기능은 다음과 같습니다.
+
+1. 출석 등록: 이름을 입력하면 날짜와 함께 기록합니다.
+2. 출석 목록 보기: CSV에 저장된 기록을 조회합니다.
+3. 출석 횟수 확인: 이름별 출석 횟수를 집계합니다.
+4. 종료: 출석부 프로그램을 종료합니다.
+
+출석 정보는 `attendance.csv` 파일에 저장합니다.
+
+현재 구현한 것은 **이름별 출석 횟수 조회**이며, 전체 출석률(%) 계산은 구현 완료 범위에 포함하지 않습니다.
 
 ## 3. 개발환경
+
+실습에서 사용한 도구는 다음과 같습니다.
+
 - 운영체제: Windows
-- Python: 3.15
-- Git: 2.56.0.windows.4
+- 터미널: PowerShell, Docker 내부 bash
 - 개발 도구: Visual Studio Code
+- Git: 2.56.0.windows.4
+- Python: 교육장 초기 실습에서 3.15 사용
+- Docker: Docker Desktop, Python 3.12 slim 이미지
+- 원격 저장소: GitHub
+
+GitHub 저장소:
+
+https://github.com/soyeon74/test
+
+교육장과 집 환경을 다음 폴더로 구분했습니다.
+
+- 교육장: `C:\test\교육장`
+- 집: `C:\test\집`
 
 ## 4. 교육장 실행 방법
 
-교육장 폴더에서 다음 명령을 실행합니다.
+교육장 폴더로 이동합니다.
 
-`py -3.15 attend.py`
+```powershell
+cd C:\test\교육장
+```
 
-프로그램 실행 후 1번을 선택하면 출석 등록, 2번은 목록 조회, 3번은 종료입니다.
+Python 설치 상태에 따라 다음 명령 중 사용할 수 있는 것을 선택하여 실행합니다.
 
-## 5. 집 실행 방법
+```powershell
+py -3.15 attend.py
+```
 
-집 환경의 Docker 실습 완료 후 작성할 예정입니다.
+또는:
 
-## 6. GitHub 협업 실습
+```powershell
+py attend.py
+```
 
-교육장에서 출석부 프로그램을 작성한 후 Git을 사용하여 GitHub test 저장소에 업로드했습니다.
+프로그램 실행 후 1번 출석 등록, 2번 출석 목록, 3번 출석 횟수, 4번 종료 기능을 사용할 수 있습니다.
 
-- git add: 변경사항 기록 준비
-- git commit: 로컬 Git에 기록
-- git push: GitHub에 업로드
-- git pull: GitHub에서 변경사항 받아오기
+## 5. 집에서 Docker로 실행하기
 
-## 7. 실행 검증 결과
+집 환경에서는 Windows에 Python을 별도로 설치하지 않고 Docker의 Python 이미지를 이용했습니다.
 
-- Python 프로그램 실행: 성공
-- 출석자 등록: 성공
-- 날짜 자동 기록: 성공
-- 출석 목록 조회: 성공
-- 프로그램 종료: 성공
-- GitHub push: 성공
-- Docker 실행: 미실시
+먼저 집 폴더로 이동합니다.
 
-## 8. 트러블슈팅
+```powershell
+cd C:\test\집
+```
 
-### 사례 1. Python 명령 인식 오류
-문제: `python --version` 실행 시 Python을 찾지 못함
+다음 명령으로 Docker 컨테이너를 실행합니다.
 
-확인: Python 3.15 설치 경로를 확인함
+```powershell
+docker run -it --rm -v "${PWD}:/app" -w /app python:3.12-slim bash
+```
 
-대안: `py -3.15` 명령을 사용하여 출석부 프로그램 실행에 성공함
+주요 옵션의 의미는 다음과 같습니다.
+
+- `-it`: 대화형 터미널 사용
+- `--rm`: 컨테이너 종료 후 자동 제거
+- `-v "${PWD}:/app"`: Windows 현재 폴더를 컨테이너 내부 `/app`에 연결
+- `-w /app`: 컨테이너의 시작 작업 폴더 지정
+- `python:3.12-slim`: 사용할 Python 이미지
+- `bash`: 컨테이너에서 실행할 셸
+
+컨테이너에 들어가면 다음 명령으로 파일을 확인하고 프로그램을 실행합니다.
+
+```bash
+ls
+python --version
+python attend.py
+```
+
+프로그램 종료 후 Docker에서 나오려면 다음을 입력합니다.
+
+```bash
+exit
+```
+
+## 6. Docker 바인드 마운트 검증
+
+`attendance.csv`는 GitHub에 업로드하지 않는 로컬 출석 기록 파일입니다.
+
+Docker 컨테이너에서 출석을 등록하고 종료한 다음 Windows PowerShell에서 파일을 확인했습니다.
+
+```powershell
+Get-Content attendance.csv -Encoding UTF8
+```
+
+실제 확인한 실습 데이터:
+
+```text
+날짜,이름
+2026-11-03,2
+2026-11-03,2
+```
+
+출석 횟수 조회 결과:
+
+```text
+=== 이름별 출석 횟수 ===
+2: 2회
+```
+
+숫자 `2`가 이름으로 기록된 것은 실습 입력 과정에서 발생한 데이터이며, 실제 사용자 이름을 의미하지 않습니다.
+
+첫 번째 Docker 컨테이너를 종료한 뒤 새 컨테이너를 생성해도 기록이 유지되는 것을 확인했습니다.
+
+**검증 결과:** Docker 컨테이너가 삭제되더라도 바인드 마운트로 연결한 Windows 호스트 폴더의 CSV 파일은 유지되었습니다.
+
+## 7. GitHub 협업 실습
+
+GitHub의 `test` 저장소를 교육장과 집 환경에 각각 복제했습니다.
+
+최초 복제 명령:
+
+```powershell
+git clone https://github.com/soyeon74/test.git .
+```
+
+변경사항을 저장하고 업로드하는 명령:
+
+```powershell
+git status
+git add attend.py
+git commit -m "Update attendance message"
+git push origin main
+```
+
+다른 컴퓨터에서 최신 내용을 가져오는 명령:
+
+```powershell
+git pull origin main
+```
+
+교육장에서 출석부를 개발해 GitHub에 업로드한 후, 집에서 저장소를 받아 수정했습니다.
+
+집에서 수정한 출석 완료 안내 문구는 커밋 `1fbee07`로 GitHub에 업로드했습니다.
+
+이후 가상 교육장 폴더에 저장소를 다시 복제하여 해당 커밋과 프로그램 실행을 확인했습니다.
+
+## 8. Git 브랜치 생성 및 병합 실습
+
+기존 `main` 브랜치에서 `feature-attendance-rate` 브랜치를 생성했습니다.
+
+```powershell
+git switch -c feature-attendance-rate
+```
+
+이 브랜치에서 출석 횟수 확인 기능을 추가하고 커밋했습니다.
+
+```powershell
+git add attend.py
+git commit -m "출석 횟수 확인 기능 추가"
+```
+
+그다음 `main`으로 이동하여 병합했습니다.
+
+```powershell
+git switch main
+git merge feature-attendance-rate
+```
+
+실습 결과 Fast-forward 방식으로 병합되었고, 출석 횟수 확인 기능이 `main`에 반영되었습니다.
+
+해당 기능 커밋은 `c94281a`입니다.
+
+## 9. Git 충돌 발생 및 해결 실습
+
+기존 출석부에 영향을 주지 않도록 충돌 실습용 브랜치와 파일을 별도로 사용했습니다.
+
+사용한 브랜치:
+
+- `practice-conflict`
+- `practice-conflict-b`
+
+실습용 파일:
+
+`conflict-practice.txt`
+
+공통 커밋 `f084f7b`에서 두 브랜치가 분리되었고, 동일한 줄을 서로 다르게 수정했습니다.
+
+A버전:
+
+```text
+출석 확인: A버전
+```
+
+B버전:
+
+```text
+출석 확인: B버전
+```
+
+두 브랜치를 병합하는 과정에서 다음 충돌 표시가 발생했습니다.
+
+```text
+<<<<<<< HEAD
+출석 확인: A버전
+=======
+출석 확인: B버전
+>>>>>>> practice-conflict-b
+```
+
+최초에는 충돌 표시를 제거하지 않고 `git add`와 `git commit`을 실행하여, Git이 병합 완료로 인식했지만 파일 내용에는 충돌 표시가 남아 있었습니다.
+
+이를 확인한 후 다음과 같이 내용을 정리했습니다.
+
+```text
+출석 확인: A버전과 B버전 통합 완료
+```
+
+수정 내용을 다시 저장했습니다.
+
+```powershell
+git add conflict-practice.txt
+git commit -m "충돌 표시 제거 및 통합 문구 정리"
+```
+
+최종 정리 커밋은 `5c5c1a0`입니다.
+
+`git status`에서 `nothing to commit, working tree clean`을 확인했습니다.
+
+이 실습을 통해 Git의 병합 상태가 정상이라는 사실과, **파일 내용까지 올바르게 해결되었다는 사실은 구분해서 검증해야 한다**는 점을 배웠습니다.
+
+충돌 실습은 별도 브랜치에 보존하여 기존 `main`의 출석부 프로그램을 유지했습니다.
+
+## 10. 실제 발생한 오류와 해결 방법
+
+### 사례 1. Python 명령어 인식 오류
+
+문제: 교육장 초기 환경에서 `python` 명령어로 실행하기 어려운 상황이 발생했습니다.
+
+해결: 설치된 Python 버전을 확인하고 `py -3.15` 명령으로 실행했습니다.
 
 ### 사례 2. GitHub 저장소 복제 실패
-문제: `Repository not found` 오류 발생
 
-원인: test 저장소가 생성되지 않은 상태였음
+문제: 초기 실습에서 `Repository not found` 오류가 발생했습니다.
 
-해결: GitHub에 test 저장소를 생성한 뒤 clone 성공
+해결: GitHub에 `test` 저장소를 생성한 후 올바른 주소로 복제했습니다.
 
-## 9. 향후 실습
-- Docker 컨테이너에서 출석부 실행
-- 교육장과 집의 변경사항 통합
-- 출석률 계산 기능 추가
-- 브랜치 및 병합 연습
+### 사례 3. Git 명령어를 찾지 못함
 
-## Git 브랜치 및 병합 실습
+문제: 집 컴퓨터 PowerShell에서 `git` 명령을 인식하지 못했습니다.
 
-### 1. 브랜치 생성
-기존 main 브랜치에서 새로운 기능을 개발하기 위해 `feature-attendance-rate` 브랜치를 생성하였다.
+Git이 설치된 경로를 확인한 뒤 현재 터미널의 PATH에 추가하여 해결했습니다.
 
-`git switch -c feature-attendance-rate`
+```powershell
+$env:Path += ";C:\Program Files\Git\cmd"
+```
 
-### 2. 기능 개발
-기존 출석부에 이름별 출석 횟수 확인 기능을 추가하였다.
+### 사례 4. Docker에서 Git 명령 실행 오류
 
-- 기존 메뉴: 출석 등록, 출석 목록, 종료
-- 변경 메뉴: 출석 등록, 출석 목록, 출석 횟수 확인, 종료
-- 실행 결과: 홍길동 1회 출석 확인
+문제:
 
-### 3. 변경사항 기록
-`git add attend.py`
+```text
+bash: git: command not found
+```
 
-`git commit -m "출석 횟수 확인 기능 추가"`
+원인: 사용한 Python 컨테이너 이미지에 Git이 설치되어 있지 않았습니다.
 
-### 4. main 브랜치 병합
-`git switch main`
+해결: `exit`로 Windows PowerShell로 돌아와 Git 명령을 실행했습니다.
 
-`git merge feature-attendance-rate`
+### 사례 5. Git 작성자 정보 오류
 
-병합 결과: Fast-forward 방식으로 정상 반영됨.
+문제:
 
-### 5. GitHub 업로드
-`git push`
+```text
+Author identity unknown
+```
 
-GitHub main 브랜치에 변경사항이 반영되었음을 확인하였다.
+원인: 집 컴퓨터의 Git 커밋 작성자 정보 설정이 완료되지 않은 상태였습니다.
 
-### 6. 추가 확인사항
-병합 후 프로그램의 최종 정상 종료 검증은 별도로 확인할 예정이다.
+해결: Git 작성자 정보를 설정하고 커밋을 다시 실행했습니다.
+
+```powershell
+git config --global user.name "작성자이름"
+git config --global user.email "본인이메일"
+```
+
+### 사례 6. Git 충돌이 해결되지 않은 상태
+
+문제:
+
+```text
+cannot switch branch while merging
+```
+
+원인: 충돌 해결이 끝나지 않은 병합 작업이 진행 중이었습니다.
+
+해결: 충돌 파일의 내용을 확인하고 최종 문구로 정리한 후 저장했습니다.
+
+## 11. 최종 실습 검증 결과
+
+| 실습 항목 | 결과 |
+|---|---|
+| CLI 기본 명령 사용 | 완료 |
+| GitHub 저장소 복제 | 완료 |
+| Python 출석부 제작 | 완료 |
+| 출석 등록·조회·횟수 확인 | 완료 |
+| 교육장 Python 실행 | 완료 |
+| Docker 컨테이너 실행 | 완료 |
+| Docker 바인드 마운트 | 완료 |
+| 컨테이너 재생성 후 출석 기록 유지 | 완료 |
+| Git commit 및 push | 완료 |
+| 집에서 수정한 코드의 교육장 반영 | 완료 |
+| Git 기능 브랜치 생성 및 병합 | 완료 |
+| Git 충돌 발생 및 내용 정리 | 완료 |
+| README 최종 정리 | 완료 후 GitHub 업로드 필요 |
+
+## 12. 학습 내용 및 소감
+
+이번 실습을 통해 CLI, Git, GitHub, Docker가 서로 어떤 역할을 하는지 이해할 수 있었습니다.
+
+특히 Git의 `commit`은 내 컴퓨터에 변경 이력을 저장하는 작업이고, `push`는 그 기록을 GitHub에 업로드하는 작업이라는 점을 배웠습니다.
+
+또한 Docker를 사용하면 Windows에 Python을 별도로 설치하지 않고도 Python 프로그램을 실행할 수 있으며, 바인드 마운트를 이용하면 컨테이너를 삭제한 뒤에도 출석 기록을 유지할 수 있다는 점을 직접 확인했습니다.
+
+Git 충돌 실습에서는 Git 명령이 성공했다고 해서 파일 내용까지 반드시 올바른 것은 아니므로, 최종 결과를 직접 검증하는 과정이 중요하다는 것을 배웠습니다.
+
+## 13. 향후 개선 방향
+
+현재 구현되지 않은 추가 개선 과제는 다음과 같습니다.
+
+- 출석률(%) 계산 기능
+- 중복 출석 처리 기준 개선
+- 이름 입력값 검증
+- 출석 데이터 조회 기능 개선
+
+이번 온보딩에서는 CLI·Git·Docker를 이용한 개발환경 구성과 코드 공유 및 실행 검증을 중심으로 실습을 완료했습니다.
