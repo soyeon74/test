@@ -364,3 +364,125 @@ Git 충돌 실습에서는 Git 명령이 성공했다고 해서 파일 내용까
 - 출석 데이터 조회 기능 개선
 
 이번 온보딩에서는 CLI·Git·Docker를 이용한 개발환경 구성과 코드 공유 및 실행 검증을 중심으로 실습을 완료했습니다.
+
+---
+
+## 14. 개발 워크스테이션 재평가 보완 (2026-11-09)
+
+> **실제 명령과 출력 증거:** [2026-11-09 워크스테이션 검증 로그](evidence/2026-11-09-workstation-logs.md). 2026-11-09 추가된 Dockerfile과 웹 소스는 이 저장소 루트에서 확인할 수 있습니다. 실습 여부와 제출 증거 보유 여부를 구분합니다.
+
+### 실행 환경 및 구조
+
+- Windows PowerShell, Docker Desktop Linux(WSL2), Ubuntu 24.04 bash
+- Docker Client/Server **29.9.2**, 컨텍스트 **desktop-linux**
+- Git **2.56.0.windows.4** (기존 실습 기록; 현재 버전 재확인은 필요)
+- 웹 베이스 이미지: **nginx:alpine**
+- 기존 출석부: 'attend.py', 로컬 데이터 'attendance.csv' (GitHub 비업로드)
+
+\`\`\`text
+test/
+├── README.md                            # 과제 설명, 개념, 재현 순서
+├── attend.py                            # 기존 출석부 프로그램
+├── Dockerfile                           # NGINX 커스텀 이미지 제작 설정
+├── site/index.html                      # Docker 웹 서버용 정적 페이지
+└── evidence/2026-11-09-workstation-logs.md  # 실습 실제 출력 발췌
+\`\`\`
+
+### 평가 항목별 보완 증거
+
+| 평가 | 상태 | 근거 및 남은 확인 |
+|---|---|---|
+| #1 CLI | 실행 확인 | 폴더·파일 생성, 내용 확인, 복사, 이름변경, 삭제 |
+| #2 권한 | 실행 확인 | 파일 chmod 600→644, 디렉터리 700→755, ls 출력 |
+| #3 데몬 | 실행 확인 | docker --version / docker info 서버 29.9.2 |
+| #4 hello-world | 실행 확인 | Hello from Docker! |
+| #5 이미지·컨테이너 | 실행 확인 | docker images, ps -a, logs, stats |
+| #6 Dockerfile 빌드 | 실행 확인 | workstation-web:1.0 생성 |
+| #7 포트 매핑 | 실행 확인 | 8080·8081 포트, 8081 HTTP 응답 |
+| #8 바인드 마운트 | 기존 README 통과 | 컨테이너 변경 후 CSV 유지 기록; 명령 전후 원본 로그 보강 권장 |
+| #9 Git | 기존 README 통과 | clone, commit, push, pull 기록; config/remote 출력 보강 권장 |
+| #10 폴더 구조 | 문서 보완 | 위 트리와 역할 설명 |
+| #11 재현 방법 | 문서 보완 | 아래 빌드/실행/접속 명령 |
+| #12 이미지/컨테이너 | 개념 보완 | 아래 6개 학습 개념 |
+| #13 네트워크 | 개념 보완 | 아래 포트 매핑 설명 |
+| #14 절대/상대 경로 | 개념 보완 | 아래 경로 설명 |
+| #15 권한 계산 | 개념 보완 | 아래 rwx 설명 |
+| #16 포트 충돌 | **사용자 실습 완료 진술** | 해당 실험 실제 출력 로그는 아직 미확보 |
+| #17 named volume | **추가 검증 필요** | 바인드 마운트 성공과 별개로 Docker 볼륨 출력 미확보 |
+| #18 문제 해결 | 실행 확인 | Dockerfile 누락→파일 생성→빌드 성공 및 기존 Git 충돌 사례 |
+
+실제 재평가의 통과/점수는 평가 도구의 판단에 따릅니다. 현재 자료가 없는 실습은 실제로 완료한 것으로 기재하지 않았습니다.
+
+### 재현 순서
+
+\`\`\`powershell
+git clone https://github.com/soyeon74/test.git
+cd test
+docker --version
+docker info --format '{{.ServerVersion}}'
+docker run hello-world
+docker run --rm ubuntu:24.04 echo "Ubuntu container OK"
+docker build -t workstation-web:1.0 .
+docker run -d --name workstation-web-8080 -p 8080:80 workstation-web:1.0
+docker run -d --name workstation-web-8081 -p 8081:80 workstation-web:1.0
+docker ps
+docker images
+docker logs workstation-web-8080
+docker stats --no-stream workstation-web-8080
+curl.exe http://localhost:8081
+\`\`\`
+
+브라우저에서는 http://localhost:8080 또는 http://localhost:8081 에 접속합니다. 같은 이름의 컨테이너가 이미 존재하면 새 이름을 쓰거나 기존 컨테이너를 별도로 정리해야 합니다. 평가용 브라우저 캡처는 **주소창과 응답 화면**이 함께 나타나야 합니다.
+
+### 학습 목표: 6개 개념 설명
+
+1. **절대 경로 vs 상대 경로**: \`C:\test\workstation-recheck\site\index.html\`은 시작 위치부터 지정하는 절대 경로. 프로젝트 루트의 \`.\site\index.html\`은 현재 작업 폴더 기준의 상대 경로. 고정 위치 지정에는 절대 경로, 프로젝트 내부 재사용에는 상대 경로가 유용.
+2. **r/w/x와 755·644**: r=4(읽기), w=2(쓰기), x=1(실행·디렉터리 탐색). 세 자리는 소유자/그룹/기타. 755=\`rwxr-xr-x\`, 644=\`rw-r--r--\`. Ubuntu에서 파일과 디렉터리 권한 변경을 실제 검증함.
+3. **커스텀 이미지와 컨테이너**: \`nginx:alpine\` 베이스에 \`site/index.html\`을 복사하는 Dockerfile을 작성하고 \`docker build -t workstation-web:1.0 .\` 실행. 이미지는 실행 템플릿, 컨테이너는 그 이미지의 실행 인스턴스. 동일 이미지로 8080·8081 두 인스턴스를 실행함.
+4. **네트워크/포트 매핑**: 컨테이너는 자체 네트워크 네임스페이스에서 실행됨. \`-p 8080:80\`은 호스트 8080 연결을 컨테이너 80으로 전달. \`EXPOSE 80\`만으로 호스트 포트가 열리지 않으며 \`-p\`를 지정해야 함.
+5. **Docker 볼륨/영속성**: 바인드 마운트는 지정한 호스트 경로를, named volume은 Docker 관리 저장공간을 연결. 컨테이너가 제거되어도 별도의 호스트 데이터/볼륨은 남는다. 바인드 마운트는 기존 출석 CSV로 검증했으나 Docker named volume은 아래 별도 검증 필요. 익명 볼륨도 있으나 재사용 시 named volume이 편리함.
+6. **Git vs GitHub**: Git은 로컬 코드 변경 이력 기록(\`git add/commit\`), GitHub는 온라인 협업/원격 저장소(\`git push/pull\`)를 제공. 기존 출석부를 여러 컴퓨터에서 공유하는 데 사용함.
+
+### 포트 충돌 실습 기록 보완용
+
+사용자는 포트 충돌 실험을 이미 마쳤다고 알림. 출력 로그가 전달되지 않아 아래 명령은 **재현 예시**임.
+
+\`\`\`powershell
+docker ps
+Get-NetTCPConnection -LocalPort 8080 -State Listen | Select-Object LocalAddress,LocalPort,OwningProcess
+docker run -d --name workstation-port-conflict -p 8080:80 workstation-web:1.0
+docker rm -f workstation-port-conflict
+docker run -d --name workstation-web-8082 -p 8082:80 workstation-web:1.0
+curl.exe http://localhost:8082
+\`\`\`
+
+포트 충돌은 다른 포트를 쓰거나 해당 포트를 점유한 **내가 관리하는** 컨테이너를 중지하여 해결할 수 있다. 운영체제/Docker 시스템 프로세스의 무분별한 강제 종료는 피한다.
+
+### Docker named volume 검증 예시 (실제 출력 확인 필요)
+
+\`\`\`powershell
+docker volume create workstation-data
+docker run --rm -v workstation-data:/data ubuntu:24.04 sh -c "echo hello > /data/test.txt"
+docker run --rm -v workstation-data:/data ubuntu:24.04 cat /data/test.txt
+docker volume inspect workstation-data
+\`\`\`
+
+새 컨테이너에서도 \`hello\`가 출력되어야 컨테이너 삭제 후 데이터 유지가 확인된 것이다. 이 명령은 사용자가 실행했다고 확인된 로그가 아니므로 현재 제출 증거로 간주하지 않는다.
+
+### 오류·가설·확인·조치
+
+- **문제**: \`docker build\`가 \`open Dockerfile: no such file or directory\` 오류.
+- **가설**: 작업 경로에 Dockerfile이 없음.
+- **확인**: \`Get-Content .\Dockerfile\`에서 경로 없음 오류.
+- **조치**: \`Dockerfile\` 직접 생성 후 동일 명령을 재실행해 \`workstation-web:1.0\` 빌드 성공.
+- 실제 출력은 [증거 파일](evidence/2026-11-09-workstation-logs.md)에 기록. 기존 Git 병합 충돌 및 해결 과정은 README 9~10절 참고.
+
+### 추가 확인 명령
+
+\`\`\`powershell
+git --version
+git config --list
+git remote -v
+\`\`\`
+
+출력에는 개인 이메일·토큰·인증정보가 있는지 확인하고 필요한 부분을 가린 뒤 보존해야 합니다. Git 설정을 출력했다는 사실을 보여줄 경우 개인정보는 마스킹하여 제출합니다.
