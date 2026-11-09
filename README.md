@@ -486,3 +486,19 @@ git remote -v
 \`\`\`
 
 출력에는 개인 이메일·토큰·인증정보가 있는지 확인하고 필요한 부분을 가린 뒤 보존해야 합니다. Git 설정을 출력했다는 사실을 보여줄 경우 개인정보는 마스킹하여 제출합니다.
+
+
+### #17 실제 Docker 볼륨 검증 로그 생성하기 (2026-11-09 추가)
+
+[볼륨 검증 스크립트](scripts/verify-volume.ps1)를 저장소에 추가했습니다. 실제 성공 여부는 **사용자 컴퓨터에서 실행 후 저장된 결과**로만 판정합니다. 아직 실제 출력 로그가 제출된 것은 아닙니다.
+
+PowerShell에서 저장소를 복제한 폴더(예: \`C:\test\집\`)로 이동한 뒤 실행:
+
+\`\`\`powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-volume.ps1
+Get-Content .\evidence\volume-verification-actual.txt
+\`\`\`
+
+스크립트는 Docker named volume을 생성하여 첫 컨테이너에 proof.txt를 쓰고, **첫 컨테이너 삭제 후** 새 컨테이너가 파일을 읽는지 확인합니다. 실제 실행할 때 명령과 출력, PASS/FAIL 결과를 \`evidence/volume-verification-actual.txt\`로 저장합니다. 기존 볼륨을 자동 삭제하지 않습니다.
+
+로그가 생성된 경우 내용을 검토해 비밀·개인정보가 없는지 확인하고 해당 파일을 GitHub에 추가해야 평가 증거가 완성됩니다. \`RESULT: PASS\`가 기록되지 않았다면 완료로 표시하지 않습니다.
