@@ -408,7 +408,7 @@ test/
 | #14 절대/상대 경로 | 개념 보완 | 아래 경로 설명 |
 | #15 권한 계산 | 개념 보완 | 아래 rwx 설명 |
 | #16 포트 충돌 | **사용자 실습 완료 진술** | 해당 실험 실제 출력 로그는 아직 미확보 |
-| #17 named volume | **추가 검증 필요** | 바인드 마운트 성공과 별개로 Docker 볼륨 출력 미확보 |
+| #17 named volume | **실행 검증 성공** | [실제 로그](evidence/volume-verification-actual.txt): 컨테이너 삭제·재생성 후 동일 파일 읽기, RESULT: PASS |
 | #18 문제 해결 | 실행 확인 | Dockerfile 누락→파일 생성→빌드 성공 및 기존 Git 충돌 사례 |
 
 실제 재평가의 통과/점수는 평가 도구의 판단에 따릅니다. 현재 자료가 없는 실습은 실제로 완료한 것으로 기재하지 않았습니다.
@@ -502,3 +502,24 @@ Get-Content .\evidence\volume-verification-actual.txt
 스크립트는 Docker named volume을 생성하여 첫 컨테이너에 proof.txt를 쓰고, **첫 컨테이너 삭제 후** 새 컨테이너가 파일을 읽는지 확인합니다. 실제 실행할 때 명령과 출력, PASS/FAIL 결과를 \`evidence/volume-verification-actual.txt\`로 저장합니다. 기존 볼륨을 자동 삭제하지 않습니다.
 
 로그가 생성된 경우 내용을 검토해 비밀·개인정보가 없는지 확인하고 해당 파일을 GitHub에 추가해야 평가 증거가 완성됩니다. \`RESULT: PASS\`가 기록되지 않았다면 완료로 표시하지 않습니다.
+
+
+### #17 검증 완료 — 2026-11-09 19:56 KST
+
+**실제 터미널 출력:** [evidence/volume-verification-actual.txt](evidence/volume-verification-actual.txt)
+
+```text
+PS> docker volume create workstation-evaluation-data
+workstation-evaluation-data
+PS> docker run --name workstation-volume-first -v workstation-evaluation-data:/data ubuntu:24.04 sh -c echo volume-data-verified > /data/proof.txt; cat /data/proof.txt
+volume-data-verified
+PS> docker rm workstation-volume-first
+workstation-volume-first
+PS> docker run --name workstation-volume-second -v workstation-evaluation-data:/data ubuntu:24.04 cat /data/proof.txt
+volume-data-verified
+PS> docker rm workstation-volume-second
+workstation-volume-second
+RESULT: PASS — persisted after container recreation
+```
+
+첫 번째 컨테이너를 삭제해도 관리형(named) 볼륨 `workstation-evaluation-data`가 유지되고, 두 번째 컨테이너에서 `/data/proof.txt`의 동일 내용을 읽어 데이터 영속성을 확인함. 기존 '추가 검증 필요' 안내는 이 날짜 이전의 기록이며 이 절의 성공 검증이 최신 결과임. **포트 충돌(#16) 실행 로그와 브라우저 주소창 캡처는 아직 첨부되지 않았음.**
