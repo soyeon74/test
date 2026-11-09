@@ -1,0 +1,26 @@
+Actual volume verification: 2026-11-09 19:56:31
+PS> docker info --format {{.ServerVersion}}
+29.9.2
+PS> docker volume create workstation-evaluation-data
+workstation-evaluation-data
+PS> docker run --name workstation-volume-first -v workstation-evaluation-data:/data ubuntu:24.04 sh -c echo volume-data-verified > /data/proof.txt; cat /data/proof.txt
+volume-data-verified
+PS> docker rm workstation-volume-first
+workstation-volume-first
+PS> docker run --name workstation-volume-second -v workstation-evaluation-data:/data ubuntu:24.04 cat /data/proof.txt
+volume-data-verified
+PS> docker rm workstation-volume-second
+workstation-volume-second
+PS> docker volume inspect workstation-evaluation-data
+[
+    {
+        "CreatedAt": "2026-11-09T10:56:32Z",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/workstation-evaluation-data/_data",
+        "Name": "workstation-evaluation-data",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+RESULT: PASS — persisted after container recreation
