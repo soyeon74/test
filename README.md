@@ -536,3 +536,25 @@ RESULT: PASS — persisted after container recreation
 | 바인드 마운트 | 기존 attendance.csv 데이터 유지 기록 | 호스트 파일 변경 전후를 비교하는 실제 터미널 출력 |
 
 캡처 또는 실행 로그가 새로 제출되면 이를 추가 업로드해 해당 항목을 검증 완료로 갱신합니다. 현 단계에서 **미첨부 화면을 실제 증거로 표시하지 않습니다.**
+
+### 브라우저 접속 증거: 8080·8081 포트 (2026-11-16)
+
+GitHub에서 복원한 `Dockerfile`로 빌드한 `workstation-web:1.0` 이미지를 사용했습니다. 컨테이너의 NGINX 80번 포트를 PC의 8080번과 8081번 포트로 각각 연결하여 브라우저에서 동일한 웹 화면이 출력되는 것을 확인했습니다.
+
+- **8080 접속 성공:** [http://localhost:8080](http://localhost:8080) — 주소창과 웹 서버 응답을 함께 캡처
+
+  ![8080 포트 브라우저 접속 성공 화면](evidence/port-8080-browser-2026-11-16.png)
+
+- **8081 접속 성공:** [http://localhost:8081](http://localhost:8081) — 주소창과 웹 서버 응답을 함께 캡처
+
+  ![8081 포트 브라우저 접속 성공 화면](evidence/port-8081-browser-2026-11-16.png)
+
+실행/검증 명령어(Windows PowerShell):
+
+```powershell
+docker ps -a
+curl.exe http://localhost:8080
+curl.exe http://localhost:8081
+```
+
+기존 운영 명령 출력은 [2026-11-09 Docker 운영 및 HTTP 검증 로그](evidence/2026-11-09-workstation-logs.md)에서 확인할 수 있습니다. 위 브라우저 화면은 2026-11-16에 추가로 수집한 증거입니다.
