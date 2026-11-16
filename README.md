@@ -523,3 +523,16 @@ RESULT: PASS — persisted after container recreation
 ```
 
 첫 번째 컨테이너를 삭제해도 관리형(named) 볼륨 `workstation-evaluation-data`가 유지되고, 두 번째 컨테이너에서 `/data/proof.txt`의 동일 내용을 읽어 데이터 영속성을 확인함. 기존 '추가 검증 필요' 안내는 이 날짜 이전의 기록이며 이 절의 성공 검증이 최신 결과임. **포트 충돌(#16) 실행 로그와 브라우저 주소창 캡처는 아직 첨부되지 않았음.**
+
+
+## 15. 재평가 증거 추가 수집 안내 (2026-11-16)
+
+[브라우저 포트 접속 캡처·Git/VS Code 연동·바인드 마운트 전후 비교 안내](evidence/additional-proof-guide.md)를 추가했습니다. 이전 실습에서 **실제로 확인된** 포트 매핑 및 HTTP 성공 로그는 [워크스테이션 증거](evidence/2026-11-09-workstation-logs.md)에 있고, named volume 영속성 성공은 [실제 볼륨 로그](evidence/volume-verification-actual.txt)에 있습니다.
+
+| 항목 | 확인된 부분 | 여전히 필요한 원본 증거 |
+|---|---|---|
+| 포트 접속 | 8080/8081 컨테이너 실행과 HTTP 응답 | 브라우저 주소창과 페이지를 한 화면에 담은 캡처 |
+| Git 설정 / VS Code | GitHub 저장소 복제·커밋·푸시 이력 | Git 설정/remote 출력, VS Code GitHub 로그인 캡처 |
+| 바인드 마운트 | 기존 attendance.csv 데이터 유지 기록 | 호스트 파일 변경 전후를 비교하는 실제 터미널 출력 |
+
+캡처 또는 실행 로그가 새로 제출되면 이를 추가 업로드해 해당 항목을 검증 완료로 갱신합니다. 현 단계에서 **미첨부 화면을 실제 증거로 표시하지 않습니다.**
